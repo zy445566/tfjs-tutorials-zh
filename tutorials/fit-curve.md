@@ -15,7 +15,7 @@
 ```sh
 $ git clone https://github.com/tensorflow/tfjs-examples
 $ cd tfjs-examples/polynomial-regression-core
-$ yarn # 对应 npm install
+$ yarn # 对应 npm install
 $ yarn watch # 对应 npm run watch
 ```
 上面的tfjs-examples/polynomial-regression-core目录是完全独立的，因此您可以复制它以启动您自己的项目。
@@ -83,7 +83,7 @@ function loss(predictions, labels) {
 # 定义优化器
 对于我们的优化器，我们将使用 随机梯度下降法（SGD，即从数据集中随机均匀选择的单个样本来计算每步的梯度估算值）。SGD通过获取数据集中随机点的梯度并使用其值来通知是否增加或减少模型系数的值来工作。
 
-TensorFlow.js为执行SGD提供了便利功能，因此您不必担心自己执行所有这些数学运算(换句话说，概念你至少要知道)。tf.train.sgd将所需的学习速率作为输入，并返回一个SGDOptimizer对象，可以调用该对象以优化损失函数的值。
+TensorFlow.js为执行SGD提供了便利功能，因此您不必担心自己执行所有这些数学运算(换句话说，概念你至少要知道)。tf.train.sgd将所需的学习速率作为输入，并返回一个SGDOptimizer对象，可以调用该对象以优化损失函数的值。
 
 该学习速率控制有多大改善其预测当模特的调整会。低学习率将使学习过程运行得更慢（学习好系数需要更多的训练迭代），而高学习率将加速学习，但可能导致模型围绕正确值振荡，总是过度校正。
 
@@ -132,7 +132,7 @@ for (let iter = 0; iter < numIterations; iter++) {
 }
 ```
 minimize 采取做两件事的功能：
-1. 它使用我们之前在步骤2中定义的预测模型函数预测所有x值的y值（predYs)
+1. 它使用我们之前在步骤2中定义的预测模型函数预测所有x值的y值（predYs)
 2. 它使用我们之前在`定义损耗计算函数`中使用损耗计算函数返回那些预测的均方误差。
 
 minimize然后通过Variable该功能自动调整（系数a，b，c，和d），以尽量减少返回值（我们的损耗）。
