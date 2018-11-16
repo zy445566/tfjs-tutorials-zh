@@ -60,7 +60,7 @@ Variables主要用于在模型训练期间存储和更新值。
 # Operations (Ops)
 虽然tensors允许您存储数据，但Operations (Ops)允许您操作该数据。TensorFlow.js提供了多种适用于线性代数和机器学习的运算，可以在tensors上执行。因为tensors是不可变的，所以这些操作不会改变它们的值，而是返回新的tensors。
 
-可用的Ops包括一元操作，例如square(平方)：
+可用的Ops包括一元操作，例如square(平方)：
 ```js
 const d = tf.tensor2d([[1.0, 2.0], [3.0, 4.0]]);
 const d_squared = d.square();
@@ -121,9 +121,9 @@ const b = tf.scalar(4);
 const c = tf.scalar(8);
 
 // Predict output for input of 2
-// 这里的输入值就是x
+// 这里的输入值就是x
 const result = predict(2);
-// 这里的输出值就是y
+// 这里的输出值就是y
 result.print() // Output: 24
 ```
 
@@ -134,7 +134,7 @@ const model = tf.sequential();
 model.add(
   tf.layers.simpleRNN({
     units: 20, // 空间维数
-    recurrentInitializer: 'GlorotNormal', // 线性规则设置为正态分布
+    recurrentInitializer: 'GlorotNormal', // 线性规则设置为正态分布
     inputShape: [80, 4] // 定义阵列形状属性为80行，每行4个元素
   })
 );
@@ -177,11 +177,11 @@ const average = tf.tidy(() => {
   // of intermediate tensors get created. So it is a good practice to
   // put your math ops in a tidy!
   const y = tf.tensor1d([1.0, 2.0, 3.0, 4.0]);
-  const z = tf.ones([4]);// [4]表示一个1行4元素的矩阵，ones是将矩阵所有的值填充为1
+  const z = tf.ones([4]);// [4]表示一个1行4元素的矩阵，ones是将矩阵所有的值填充为1
   // 即第一步 [1.0, 2.0, 3.0, 4.0]减[1, 1, 1, 1]
-  // 第二步 [0, 1, 2, 3] 平方后 [0, 1, 4, 9]
+  // 第二步 [0, 1, 2, 3] 平方后 [0, 1, 4, 9]
   // 第三步 求平均值 即 (0+1+4+9)/4 = 3.5
-  // 当然这里主要要表达是在tf.tidy内tensor都会被回收掉，就不用像dispose这么麻烦
+  // 当然这里主要要表达是在tf.tidy内tensor都会被回收掉，就不用像dispose这么麻烦
   return y.sub(z).square().mean();
 });
 

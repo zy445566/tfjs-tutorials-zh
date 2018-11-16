@@ -1,5 +1,5 @@
 # tfjs-tutorials-zh
-tfjs(tensorflow.js)中文指南 `该指南还未完成`
+tfjs(tensorflow.js)中文指南 `该指南还未完成`
 
 # 目录
 
