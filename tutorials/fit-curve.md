@@ -23,7 +23,7 @@ $ yarn watch # 对应 npm run watch
 # 输入数据
 我们的合成数据集由x坐标和y坐标组成，在笛卡尔平面上绘制时如下所示：
 
-![fit_curve_data.png](./fit_curve_data.png)
+![fit_curve_data.png](./pics/fit_curve_data.png)
 
 使用格式y = a*x^3 + b*x^2 + c*x + d 的三次函数生成该数据。
 我们的任务是学习该函数的系数：最适合数据的a，b，c和d的值。让我们看一下如何使用TensorFlow.js操作学习这些值。
@@ -57,7 +57,7 @@ function predict(x) {
 
 让我们继续使用我们在步骤1中设置的a，b，c和d的随机值绘制我们的多项式函数。我们的图可能看起来像这样：
 
-![fit_curve_random.png](./fit_curve_random.png)
+![fit_curve_random.png](./pics/fit_curve_random.png)
 
 因为我们从随机值开始，所以我们的函数很可能不适合数据集。该模型尚未学习更好的系数值。
 
@@ -142,7 +142,7 @@ minimize然后通过Variable该功能自动调整（系数a，b，c，和d），
 # 看看结果！
 一旦程序完成运行，我们可以采取的最终值我们的变量a，b，c，和d，并利用它们来绘制曲线：
 
-![fit_curve_learned.png](./fit_curve_learned.png)
+![fit_curve_learned.png](./pics/fit_curve_learned.png)
 
 结果比我们最初使用系数的随机值绘制的曲线好得多。
 
