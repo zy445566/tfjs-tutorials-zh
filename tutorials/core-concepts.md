@@ -46,7 +46,7 @@ const zeros = tf.zeros([3, 5]);
 # Variables
 Variables是被tensor的值初始化的。与Tensors不同，它们的值是可变的。您可以使用assign方法为现有变量指定新的tensor：
 ```js
-const initialValues = tf.zeros([5]);
+const initialValues = tf.zeros([5]); // 这个方法就是将一行5元素的形状填充0
 const biases = tf.variable(initialValues); // initialize biases
 biases.print(); // output: [0, 0, 0, 0, 0]
 
@@ -139,8 +139,10 @@ model.add(
   })
 );
 
-const optimizer = tf.train.sgd(LEARNING_RATE);
+const optimizer = tf.train.sgd(LEARNING_RATE);//sgd 表示随机梯度下降法,有兴趣可搜索
+// 这里是编译优化器和性能损失函数，不明白没关系下节会讲
 model.compile({optimizer, loss: 'categoricalCrossentropy'});
+// 适配数据
 model.fit({x: data, y: labels});
 ```
 
@@ -194,3 +196,6 @@ average.print() // Output: 3.5
 `两个重要的注释`
 * 传递给的函数tf.tidy应该是同步的，也不能返回Promise。我们建议将更新UI或在远程请求的代码放在tf.tidy函数的外面。
 * tf.tidy 不会清理变量。变量通常持续到机器学习模型的整个生命周期，因此TensorFlow.js即使它们是在一个中创建的，也不会清理它们tidy。但是，您可以dispose手动调用它们。
+
+# 本文代码
+[点此打开代码目录](./code/core-concepts/)
