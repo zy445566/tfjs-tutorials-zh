@@ -85,3 +85,191 @@ model.add(tf.layers.conv2d({
 * kernelInitializer。用于随机初始化模型权重的方法，这对训练动力学非常重要。我们不会在这里详细介绍初始化，但是VarianceScaling（这里使用）通常是一个很好的初始化器选择。
 
 # 添加第二层
+让我们在模型中添加第二层：最大池层，我们将使用它创建tf.layers.maxPooling2d。该层将通过计算每个滑动窗口的最大值来从卷积中对结果（也称为激活）进行下采样：
+```js
+model.add(tf.layers.maxPooling2d({
+  poolSize: [2, 2],
+  strides: [2, 2]
+}));
+```
+让我们打破这些论点：
+* poolSize。要应用于输入数据的滑动池窗口的大小。在这里，我们设置poolSize的[2,2]，这意味着汇集层将应用2×2窗口的输入数据。
+* strides。滑动池窗口的“步长” - 即每次窗口在输入数据上移动时窗口将移动多少像素。在这里，我们指定步幅[2, 2]，这意味着滤镜将在水平和垂直方向上以2像素的步长滑过图像。
+
+`注`：由于这两个poolSize和strides是2×2的集中窗口将完全不重叠。这意味着池化层将激活前一层的激活大小减半。
+
+# 添加剩余的图层
+重复层结构是神经网络中的常见模式。让我们添加第二个卷积层，然后添加另一个池模型到我们的模型。请注意，在我们的第二个卷积层中，我们将过滤器的数量从8增加到16.还要注意我们没有指定inputShape，因为它可以从前一层的输出形状推断：
+```js
+model.add(tf.layers.conv2d({
+  kernelSize: 5,
+  filters: 16,
+  strides: 1,
+  activation: 'relu',
+  kernelInitializer: 'VarianceScaling'
+}));
+
+model.add(tf.layers.maxPooling2d({
+  poolSize: [2, 2],
+  strides: [2, 2]
+}));
+```
+接下来，让我们添加一个flatten图层，将前一层的输出展平为矢量：
+```js
+model.add(tf.layers.flatten());
+```
+最后，让我们添加一个dense层（也称为完全连接层），它将执行最终分类。在密集层之前展平卷积+池层对的输出是神经网络中的另一种常见模式：
+```js
+model.add(tf.layers.dense({
+  units: 10,
+  kernelInitializer: 'VarianceScaling',
+  activation: 'softmax'
+}));
+```
+让我们分解传递给dense图层的参数。
+
+* units。输出激活的大小。由于这是最后一层，我们正在进行10级分类任务（数字0-9），我们在这里使用10个单位。（有时单位被称为神经元的数量，但我们将避免使用该术语。）
+* kernelInitializer。我们将对VarianceScaling用于卷积层的密集层使用相同的初始化策略。
+* activation。分类任务的最后一层的激活功能通常是softmax。Softmax将我们的10维输出向量归一化为概率分布，因此我们有10个类别中每个类别的概率。
+
+# 培训模型
+为了实际驱动模型的训练，我们需要构造一个优化器并定义一个损耗计算函数。我们还将定义评估指标，以衡量我们的模型对数据的执行情况。
+
+`注意`：要深入了解TensorFlow.js中的优化器和损耗计算函数，请参阅“[训练第一步](./fit-curve.md)”教程。
+
+# 定义优化程序
+对于我们的卷积神经网络模型，我们将使用学习率为0.15 的随机梯度下降（SGD）优化器：
+```js
+const LEARNING_RATE = 0.15;
+const optimizer = tf.train.sgd(LEARNING_RATE);
+```
+
+# 定义损耗计算函数
+对于我们的损失函数，我们将使用cross-entropy（categoricalCrossentropy），它通常用于优化分类任务。categoricalCrossentropy测量由模型的最后一层生成的概率分布与我们的标签给出的概率分布之间的误差，该分布将是在正确的类标签中具有1（100％）的分布。例如，给定数字7的示例的以下标签和预测值：
+
+| 分类 | 0 | 1 |	2 |	3 |	4 |	5 |	6 |	7 |	8 |	9 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 标签 | 0 | 0 | 0 |	0 |	0 |	0 |	0 |	1 |	0 |	0 |
+| 预测 | .1 |	.01 |	.01 |	.01 |	.20 |	.01 |	.01 |	.60 | .03 |	.02 |
+
+categoricalCrossentropy给出了一个较低的损耗值，如果预测是高概率位是7，和一个更高的损耗值，如果预测是低概率7。在训练期间，模型将更新其内部参数以最小化categoricalCrossentropy整个数据集。
+
+# 定义评估指标
+对于我们的评估指标，我们将使用准确度，该准确度衡量所有预测中正确预测的百分比。
+
+# 编译模型
+为了编译模型，我们使用我们的优化器，损失函数和评估指标列表（仅此处'accuracy'）传递一个配置对象：
+```js
+model.compile({
+  optimizer: optimizer,
+  loss: 'categoricalCrossentropy',
+  metrics: ['accuracy'],
+});
+```
+# 配置批量大小
+在开始培训之前，我们需要定义一些与批量大小相关的参数：
+```js
+// How many examples the model should "see" before making a parameter update.
+const BATCH_SIZE = 64;
+// How many batches to train the model for.
+const TRAIN_BATCHES = 100;
+
+// Every TEST_ITERATION_FREQUENCY batches, test accuracy over TEST_BATCH_SIZE examples.
+// Ideally, we'd compute accuracy over the whole test set, but for performance
+// reasons we'll use a subset.
+const TEST_BATCH_SIZE = 1000;
+const TEST_ITERATION_FREQUENCY = 5;
+```
+<strong>有关批处理和批处理大小的更多信息</strong>
+
+为了充分利用GPU并行计算的能力，我们希望将多个输入一起批处理，并使用单个前馈调用通过网络提供它们。
+
+我们对计算进行批处理的另一个原因是，在优化期间，我们仅在对几个示例的梯度进行平均后才更新内部参数（采取步骤）。这有助于我们避免因错误的方向而向前迈出一步（例如，错误标记的数字）。
+
+在对输入数据进行批处理时，我们引入了秩D + 1的张量，其中D是单个输入的维数。
+
+如前所述，我们的MNIST数据集中单个图像的维度是[28, 28, 1]。当我们设置BATCH_SIZE64时，我们一次批量处理64个图像，这意味着我们数据的实际形状是[64, 28, 28, 1]（批处理总是最外层的维度）。
+
+`注意`：回想一下，inputShape我们的第一个配置中conv2d没有指定批量大小（64）。配置编写为批量大小不可知，因此它们能够接受任意大小的批量。
+
+# 编码训练循环
+以下是训练循环的代码：
+```js
+for (let i = 0; i < TRAIN_BATCHES; i++) {
+  const batch = data.nextTrainBatch(BATCH_SIZE);
+ 
+  let testBatch;
+  let validationData;
+  // Every few batches test the accuracy of the mode.
+  if (i % TEST_ITERATION_FREQUENCY === 0) {
+    testBatch = data.nextTestBatch(TEST_BATCH_SIZE);
+    validationData = [
+      testBatch.xs.reshape([TEST_BATCH_SIZE, 28, 28, 1]), testBatch.labels
+    ];
+  }
+ 
+  // The entire dataset doesn't fit into memory so we call fit repeatedly
+  // with batches.
+  const history = await model.fit(
+      batch.xs.reshape([BATCH_SIZE, 28, 28, 1]),
+      batch.labels,
+      {
+        batchSize: BATCH_SIZE,
+        validationData,
+        epochs: 1
+      });
+
+  const loss = history.history.loss[0];
+  const accuracy = history.history.acc[0];
+
+  // ... plotting code ...
+}
+```
+让我们打破代码吧。首先，我们获取一批培训示例。回想一下，我们批量示例利用GPU并行化并在进行参数更新之前平均来自许多示例的证据：
+```js
+const batch = data.nextTrainBatch(BATCH_SIZE);
+```
+每5个步骤（TEST_ITERATION_FREQUENCY我们构建validationData一个包含来自测试集的一批MNIST图像的两个元素的数组及其相应的标签。我们将使用此数据来评估模型的准确性：
+```js
+if (i % TEST_ITERATION_FREQUENCY === 0) {
+  testBatch = data.nextTestBatch(TEST_BATCH_SIZE);
+  validationData = [
+    testBatch.xs.reshape([TEST_BATCH_SIZE, 28, 28, 1]),
+    testBatch.labels
+  ];
+}
+```
+model.fit 是训练模型和参数实际更新的地方。
+
+`注意`：model.fit()在整个数据集上调用一次将导致将整个数据集上载到GPU，这可能会冻结应用程序。为避免将过多数据上传到GPU，我们建议model.fit()在for循环内调用，一次传递一批数据，如下所示：
+```js
+// The entire dataset doesn't fit into memory so we call fit repeatedly
+// with batches.
+  const history = await model.fit(
+      batch.xs.reshape([BATCH_SIZE, 28, 28, 1]), batch.labels,
+      {batchSize: BATCH_SIZE, validationData: validationData, epochs: 1});
+```
+让我们再次打破这些争论：
+
+* x。我们的输入图像数据。请记住，我们正在批量提供示例，因此我们必须告诉 fit函数我们的批次有多大。MnistData.nextTrainBatch返回具有形状[BATCH_SIZE, 784]的图像 - 所有图像的数据在长度为784（28 * 28）的1-D向量中。但是，我们的模型期望图像数据在形状中[BATCH_SIZE, 28, 28, 1]，因此我们reshape相应地。
+
+* y。我们的标签; 每个图像的正确数字分类。
+
+* batchSize。每个培训批次中包含多少图像。之前我们BATCH_SIZE在这里设置了64个。
+
+* validationData。我们构建每个TEST_ITERATION_FREQUENCY（此处，5个）批次的验证集。这个数据是形状[TEST_BATCH_SIZE, 28, 28, 1]。之前，我们设置了TEST_BATCH_SIZE1000.我们将在此数据集上计算我们的评估指标（准确度）。
+
+* epochs。批量执行的训练次数。由于我们正在迭代地为批次提供批次fit，我们只希望它一次性从该批次进行培训。
+
+每次调用时fit，它都会返回一个富对象，其中包含我们存储的指标日志history。我们提取每次训练迭代的损失和准确性，因此我们可以在图表上绘制它们：
+```js
+const loss = history.history.loss[0];
+const accuracy = history.history.acc[0];
+```
+
+# 查看结果！
+如果您运行完整代码，您应该看到如下输出：
+
+![mnist_learned.png](./pics/mnist_learned.png)
+
+看起来模型正在预测大多数图像的正确数字。非常好！
