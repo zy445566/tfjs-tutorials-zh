@@ -46,7 +46,7 @@ const zeros = tf.zeros([3, 5]);
 # Variables
 Variables是被tensor的值初始化的。与Tensors不同，它们的值是可变的。您可以使用assign方法为现有变量指定新的tensor：
 ```js
-const initialValues = tf.zeros([5]); // 这个方法就是将一行5元素的形状填充0
+const initialValues = tf.zeros([5]); // 这个方法就是将一行5元素的形状填充0
 const biases = tf.variable(initialValues); // initialize biases
 biases.print(); // output: [0, 0, 0, 0, 0]
 
@@ -130,8 +130,8 @@ result.print() // Output: 24
 您还可以使用高级API tf.model来构建图层的模型，这是深度学习中的流行抽象。以下代码构造了一个tf.sequential模型：
 
 ```js
-// 个人觉得model和layers有点像大脑和神经(比如听觉神经，视觉神经)或部分神经的关系
-// 比如下面就像大脑处理一个[80, 4]的形状的神经
+// 个人觉得model和layers有点像大脑和神经(比如听觉神经，视觉神经)或部分神经的关系
+// 比如下面就像大脑处理一个[80, 4]的形状的神经
 const model = tf.sequential();
 model.add(
   tf.layers.simpleRNN({
@@ -142,7 +142,7 @@ model.add(
 );
 
 const optimizer = tf.train.sgd(LEARNING_RATE);//sgd 表示随机梯度下降法,有兴趣可搜索
-// 这里是编译优化器和性能损失函数，不明白没关系下节会讲
+// 这里是编译优化器和性能损失函数，不明白没关系下节会讲
 model.compile({optimizer, loss: 'categoricalCrossentropy'});
 // 适配数据,用于训练模型和更新参数
 model.fit({x: data, y: labels});
@@ -200,4 +200,4 @@ average.print() // Output: 3.5
 * tf.tidy 不会清理变量。变量通常持续到机器学习模型的整个生命周期，因此TensorFlow.js即使它们是在一个中创建的，也不会清理它们tidy。但是，您可以dispose手动调用它们。
 
 # 本文代码
-[点此打开代码目录,可能对比官方有一定修改，增加了自己的注释和理解](./code/core-concepts/)
+[点此打开代码目录,可能对比官方有一定修改，增加了自己的注释和理解](./code/core-concepts/)

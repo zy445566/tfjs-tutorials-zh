@@ -1,10 +1,10 @@
 // trainSize totol 60000
 // testSize totol 10000
 // How many examples the model should "see" before making a parameter update.
-// 每一次模型训练都要看多少示例
+// 每一次模型训练都要看多少示例
 const BATCH_SIZE = 64;
 // How many batches to train the model for.
-// 训练次数
+// 训练次数
 const TRAIN_BATCHES = 100;
 
 // Every TEST_ITERATION_FREQUENCY batches, test accuracy over TEST_BATCH_SIZE examples.
@@ -12,7 +12,7 @@ const TRAIN_BATCHES = 100;
 // reasons we'll use a subset.
 // 每一次测试的张数
 const TEST_BATCH_SIZE = 1000;
-// 测试迭代循环频率
+// 测试迭代循环频率
 const TEST_ITERATION_FREQUENCY = 5;
 
 
@@ -25,7 +25,7 @@ module.exports = async function trains(model,data){
     let testBatch;
     let validationData;
     // Every few batches test the accuracy of the mode.
-    // 每训练TEST_ITERATION_FREQUENCY次就测试一次，来确定训练的准确性
+    // 每训练TEST_ITERATION_FREQUENCY次就测试一次，来确定训练的准确性
     if (i % TEST_ITERATION_FREQUENCY === 0) {
       testBatch = data.nextTestBatch(TEST_BATCH_SIZE);
       //因为使用node版本的数据文件，所以无需还原形状，和官方略有修改
@@ -45,12 +45,12 @@ module.exports = async function trains(model,data){
           validationData, //测试的结果验证集
           epochs: 1 //批量执行的训练次数
         });
-    // 损耗计算值
+    // 损耗计算值
     const loss = history.history.loss[0];
-    // 精确度精确度值
+    // 精确度精确度值
     const accuracy = history.history.acc[0];
     console.log(`No ${i} Train.loss value,accuracy value:`)
-    // 按照训练理论来说损耗率将不断降低，准确度将不断提升
+    // 按照训练理论来说损耗率将不断降低，准确度将不断提升
     console.log(`loss rate:${loss}`)
     console.log(`accuracy rate:${accuracy*100}%`);
   }

@@ -170,7 +170,7 @@ model.compile({
 在开始培训之前，我们需要定义一些与批量大小相关的参数：
 ```js
 // How many examples the model should "see" before making a parameter update.
-// 每一次模型训练都要看多少示例
+// 每一次模型训练都要看多少示例
 const BATCH_SIZE = 64;
 // How many batches to train the model for.
 const TRAIN_BATCHES = 100;
@@ -179,7 +179,7 @@ const TRAIN_BATCHES = 100;
 // Ideally, we'd compute accuracy over the whole test set, but for performance
 // reasons we'll use a subset.
 const TEST_BATCH_SIZE = 1000;
-// 测试迭代循环频率
+// 测试迭代循环频率
 const TEST_ITERATION_FREQUENCY = 5;
 ```
 <strong>有关批处理和批处理大小的更多信息</strong>
@@ -277,4 +277,4 @@ const accuracy = history.history.acc[0];
 看起来模型正在预测大多数图像的正确数字。非常好！
 
 # 本文代码
-[点此打开代码目录,可能对比官方有一定修改，增加了自己的注释和理解](./code/mnist)
+[点此打开代码目录,可能对比官方有一定修改，增加了自己的注释和理解](./code/mnist)

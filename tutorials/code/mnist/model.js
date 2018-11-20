@@ -41,7 +41,7 @@ model.add(tf.layers.flatten());
 model.add(tf.layers.dense({
     units: 10, // 输出等级分类
     kernelInitializer: 'VarianceScaling',
-    activation: 'softmax' // 激活功能模式，softmax将分布转换为概率分布
+    activation: 'softmax' // 激活功能模式，softmax将分布转换为概率分布
 }));
 
 // 定义优化器
@@ -52,7 +52,7 @@ const optimizer = tf.train.sgd(LEARNING_RATE); // sgd之前说过的随机梯度
 model.compile({
     optimizer: optimizer, // 设置模型的优化器
     loss: 'categoricalCrossentropy', // 设置模型的损耗计算函数直接使用 交叉熵
-    metrics: ['accuracy'], // 设置模型的评估指标
+    metrics: ['accuracy'], // 设置模型的评估指标
 });
 
 module.exports = model;

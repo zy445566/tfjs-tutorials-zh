@@ -133,8 +133,8 @@ class MnistDataset {
     // Only create one big array to hold batch of images.
     // 一组图像为什么是4维？
     // 第一个变量有多少张图
-    // 第二和第三分别代表高和宽[其中高宽维度存储颜色]
-    // 第四个变量表示一个以上属于一个维度
+    // 第二和第三分别代表高和宽[其中高宽维度存储颜色]
+    // 第四个变量表示一个以上属于一个维度
     const imagesShape = [size, IMAGE_HEIGHT, IMAGE_WIDTH, 1];
     const images = new Float32Array(tf.util.sizeFromShape(imagesShape));
     const labels = new Int32Array(tf.util.sizeFromShape([size, 1]));

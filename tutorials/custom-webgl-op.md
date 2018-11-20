@@ -94,7 +94,7 @@ Tensorflow.js生成可用于从输入tensor读取并写入输出tensor的函数�
 * void setOutput(float value)
     * 设置运行片段着色器的坐标的输出值（相当于gl_FragCoord = vec4(value, 0.0, 0.0, 0.0)）。
 * indexType getOutputCoords()
-    * 其中indexType是int | ivec2 | ivec3 | ivec4 | ivec5 | ivec6其中的一个。
+    * 其中indexType是int | ivec2 | ivec3 | ivec4 | ivec5 | ivec6其中的一个。
     * 如果输出tensor返回int为rank-0或rank-1，否则返回ivecNN == rank。这是此程序将写入的输出tensor中的单元格的坐标。
 * Tensorflow.js生成GLSL函数以从输入tensor进行采样。这些形式如下：
 ```js
@@ -140,7 +140,7 @@ const squareAndAddKernel = inputShape => ({
 * bool isNaN(float val)
     * true如果val是a NaN，否则为false。
 * int round(float value)
-    * 四舍五入value到最接近的整数。
+    * 四舍五入value到最接近的整数。
 * int imod(int x, int y)
     * 与float mod(float x, float y)int 相同，因为GLSL没提供给我们这样的方法。
 * float random(float seed)
