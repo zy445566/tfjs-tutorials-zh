@@ -92,7 +92,7 @@ model.add(tf.layers.maxPooling2d({
   strides: [2, 2]
 }));
 ```
-让我们打破这些论点：
+让我们解析这些论点：
 * poolSize。要应用于输入数据的滑动池窗口的大小。在这里，我们设置poolSize的[2,2]，这意味着汇集层将应用2×2窗口的输入数据。
 * strides。滑动池窗口的“步长” - 即每次窗口在输入数据上移动时窗口将移动多少像素。在这里，我们指定步幅[2, 2]，这意味着滤镜将在水平和垂直方向上以2像素的步长滑过图像。
 
@@ -114,7 +114,7 @@ model.add(tf.layers.maxPooling2d({
   strides: [2, 2]
 }));
 ```
-接下来，让我们添加一个flatten图层，将前一层的输出展平为矢量：
+接下来，让我们添加一个`flatten`图层，将前一层的输出展平为矢量：
 ```js
 model.add(tf.layers.flatten());
 ```
@@ -145,7 +145,7 @@ const optimizer = tf.train.sgd(LEARNING_RATE);
 ```
 
 # 定义损耗计算函数
-对于我们的损失函数，我们将使用cross-entropy（categoricalCrossentropy），它通常用于优化分类任务。categoricalCrossentropy测量由模型的最后一层生成的概率分布与我们的标签给出的概率分布之间的误差，该分布将是在正确的类标签中具有1（100％）的分布。例如，给定数字7的示例的以下标签和预测值：
+对于我们的损耗计算函数，我们将使用cross-entropy（categoricalCrossentropy,交叉熵），它通常用于优化分类任务。categoricalCrossentropy测量由模型的最后一层生成的概率分布与我们的标签给出的概率分布之间的误差，该分布将是在正确的类标签中具有1（100％）的分布。例如，给定数字7的示例的以下标签和预测值：
 
 | 分类 | 0 | 1 |	2 |	3 |	4 |	5 |	6 |	7 |	8 |	9 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -170,6 +170,7 @@ model.compile({
 在开始培训之前，我们需要定义一些与批量大小相关的参数：
 ```js
 // How many examples the model should "see" before making a parameter update.
+// 每一次模型训练都要看多少示例
 const BATCH_SIZE = 64;
 // How many batches to train the model for.
 const TRAIN_BATCHES = 100;
@@ -178,6 +179,7 @@ const TRAIN_BATCHES = 100;
 // Ideally, we'd compute accuracy over the whole test set, but for performance
 // reasons we'll use a subset.
 const TEST_BATCH_SIZE = 1000;
+// 测试迭代循环频率
 const TEST_ITERATION_FREQUENCY = 5;
 ```
 <strong>有关批处理和批处理大小的更多信息</strong>
@@ -225,7 +227,7 @@ for (let i = 0; i < TRAIN_BATCHES; i++) {
   // ... plotting code ...
 }
 ```
-让我们打破代码吧。首先，我们获取一批培训示例。回想一下，我们批量示例利用GPU并行化并在进行参数更新之前平均来自许多示例的证据：
+让我们解析代码吧。首先，我们获取一批培训示例。回想一下，我们批量示例利用GPU并行化并在进行参数更新之前平均来自许多示例的证据：
 ```js
 const batch = data.nextTrainBatch(BATCH_SIZE);
 ```
@@ -249,7 +251,7 @@ model.fit 是训练模型和参数实际更新的地方。
       batch.xs.reshape([BATCH_SIZE, 28, 28, 1]), batch.labels,
       {batchSize: BATCH_SIZE, validationData: validationData, epochs: 1});
 ```
-让我们再次打破这些争论：
+让我们再次解析这些争论：
 
 * x。我们的输入图像数据。请记住，我们正在批量提供示例，因此我们必须告诉 fit函数我们的批次有多大。MnistData.nextTrainBatch返回具有形状[BATCH_SIZE, 784]的图像 - 所有图像的数据在长度为784（28 * 28）的1-D向量中。但是，我们的模型期望图像数据在形状中[BATCH_SIZE, 28, 28, 1]，因此我们reshape相应地。
 
@@ -273,3 +275,6 @@ const accuracy = history.history.acc[0];
 ![mnist_learned.png](./pics/mnist_learned.png)
 
 看起来模型正在预测大多数图像的正确数字。非常好！
+
+# 本文代码
+[点此打开代码目录,可能对比官方有一定修改，增加了自己的注释和理解](./code/mnist)
