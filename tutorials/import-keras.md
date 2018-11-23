@@ -55,4 +55,4 @@ const prediction = model.predict(example);
 `请注意`，您使用model.json文件名引用整个模型。 loadModel(...)获取model.json，然后发出额外的HTTP（S）请求以获取权model.json重清单中引用的分片权重文件。这种方法允许所有这些文件由浏览器缓存（也可能由互联网上的其他缓存服务器缓存），因为model.json和权重分片都小于典型的缓存文件大小限制。因此，模型很可能在随后的场合加载更快。
 
 # 支持的功能
-TensorFlow.js图层目前仅支持使用标准Keras构造的Keras模型。使用不受支持的操作或图层的模型（例如自定义图层，Lambda图层，自定义损耗函数或自定义指标）无法自动导入，因为它们依赖于无法可靠地转换为JavaScript的Python代码。
+TensorFlow.js图层目前仅支持使用标准Keras构造的Keras模型。使用不受支持的操作或图层的模型（例如自定义图层，Lambda图层，自定义损失函数或自定义指标）无法自动导入，因为它们依赖于无法可靠地转换为JavaScript的Python代码。

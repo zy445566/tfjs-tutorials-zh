@@ -17,7 +17,7 @@ function predict(x) {
     });
 }
 
-// 定义损耗函数，使用MSE(均方误差)来检测误差
+// 定义损失函数，使用MSE(均方误差)来检测误差
 function loss(predictions, labels) {
     // Subtract our labels (actual values) from predictions, square the results,
     // and take the mean.

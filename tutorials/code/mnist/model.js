@@ -51,7 +51,7 @@ const optimizer = tf.train.sgd(LEARNING_RATE); // sgd之前说过的随机梯度
 // 编译模型
 model.compile({
     optimizer: optimizer, // 设置模型的优化器
-    loss: 'categoricalCrossentropy', // 设置模型的损耗计算函数直接使用 交叉熵
+    loss: 'categoricalCrossentropy', // 设置模型的损失计算函数直接使用 交叉熵
     metrics: ['accuracy'], // 设置模型的评估指标
 });
 

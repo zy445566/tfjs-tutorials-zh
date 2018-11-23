@@ -45,12 +45,12 @@ module.exports = async function trains(model,data){
           validationData, //测试的结果验证集
           epochs: 1 //批量执行的训练次数
         });
-    // 损耗计算值
+    // 损失计算值
     const loss = history.history.loss[0];
     // 精确度精确度值
     const accuracy = history.history.acc[0];
     console.log(`No ${i} Train.loss value,accuracy value:`)
-    // 按照训练理论来说损耗率将不断降低，准确度将不断提升
+    // 按照训练理论来说损失率将不断降低，准确度将不断提升
     console.log(`loss rate:${loss}`)
     console.log(`accuracy rate:${accuracy*100}%`);
   }
